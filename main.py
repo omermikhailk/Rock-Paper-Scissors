@@ -1,100 +1,92 @@
 from random import randint
 # To generate the random input for the computer's choice.
-from sys import exit
-# Allows program to exit.
 from time import sleep
 # Allows a natural delay to make the game seem more normal.
 
-# Will assign a number to a decision in the game.
-def choice_assigner(num):
-    if num == 1:
+def choice_logic(num):
+    """
+    Based on a numeric value this function will assign it 
+    to either rock, paper or scissors. And return the option.
+    """
+    if num == "1":
         return "Paper"
-    elif num == 2:
+    elif num == "2":
         return "Scissors"
     else:
         return "Rock"
 
-def win_decider(player, computer):
-    scenarios = ["It's a draw!", "You win!", 
-    "The computer wins!"]
-    if player == computer:
-        return scenarios[0]
-    elif player == "Rock":
-        if computer == "Scissors":
-            return scenarios[1]
+def choice_assigner():
+    """
+    This function will assign a numeric value to the computer. As 
+    well as ask the user for their input. It will then make sure 
+    that the input is valid.
+    
+    It will then assign the input to a choice in the game 
+    using the choice_logic() function. It will then return 
+    the choices for the computer and the user as a tuple.
+    """
+    user_choice = 0
+    while user_choice not in [str(i) for i in range(0, 4)]:
+        user_choice = input("\nPlease enter 1 for paper, 2 for scissors \
+and 3 for rock.\n")
+        if user_choice in ["1", "2", "3"]:
+            break
         else:
-            return scenarios[2]
-    elif player == "Scissors":
-        if computer == "Paper":
-            return scenarios[1]
-        else:
-            return scenarios[2]
-    elif player == "Paper":
-        if computer == "Rock":
-            return scenarios[1]
-        else:
-            return scenarios[2]
+            print("\nPlease enter a valid number.")
+    
+    computer_choice = str(randint(1, 3))
+    computer_choice = choice_logic(computer_choice)
+    user_choice = choice_logic(user_choice)
+    
+    sleep(0.75)
+    
+    print("\nYou chose {!s} and the computer chose {!s}.".format(user_choice,
+ computer_choice))
+    
+    return (user_choice, computer_choice)
+
+def win_decider(comp_and_user_choices):
+    """
+    Based on the result of the user's choice between rock, paper 
+    or scissors, the program will determine who will win in what 
+    scenario. And it will return the end result as well as a 
+    message based on the result.
+    """
+    player = comp_and_user_choices[0]
+    computer = comp_and_user_choices[1]
+    
+    message = (("Win", "You win!"), ("Draw", "You both drew!"), ("Loss", "You lose!"))
+    if (player, computer) in (("Rock", "Scissors"), ("Scissors", "Paper"), ("Paper", "Rock")):
+        return message[0]
+    elif player == computer:
+        return message[1]
+    else:
+        return message[2]
 
 def main():
-    tally = [0, 0, 0]
+    tally = {"Win": 0, "Loss": 0, "Draw": 0}
     while True:
-        # Continuous loop until user exits. Allows it to repeat infinitely.
+        # One while loop to let the user play until they want to stop
         while True:
-            # Loop to make sure that the user enters 1 or exit.
-            user_input = input("Write 1 to play and EXIT to exit the game.\n")
+            # A loop to make sure the user gives valid input
+            user_input = input("Write 1 to play and EXIT to quit the game.\n")
             user_input = user_input.lower()
-            if user_input not in ["1", "exit"]:
-                print("\nYour input was invalid. Please try again.")
-                continue
-            elif user_input == "exit":
-                print("\nExiting...")
+            if user_input == "exit":
+                print("\nExiting...\n")
                 sleep(0.75)
-                exit()
-            else:
+                return 0
+            elif user_input == "1":
                 break
-        computer_choice = randint(1, 3)
-        computer_choice = choice_assigner(computer_choice)
-        print("\nWhat would you like to be?")
+            else:
+                print("\nYou did not enter a valid answer. Please \
+try again!")
+        game_choices = choice_assigner()
         sleep(0.75)
-        while True:
-            # Loop for the choice of the user.
-            try:
-                player_choice = input(
-                "Please enter 1 for paper, 2 for scissors and 3 for rock.\n")
-                for i in player_choice:
-                    if i == ".":
-                        raise ValueError(
-                        "You did not enter an integer. ")
-                if player_choice not in ["1", "2", "3"]:
-                    raise ValueError(
-                    "You cannot enter a string, list, float or dictionary. Or a number which is \
-not 1, 2 or 3.")
-                else:
-                    break
-            except ValueError as ValErr:
-                print("\nERROR: ", ValErr, "Please try again.\n")
-            continue
+        game_result, game_message = win_decider(game_choices)
+        tally[game_result] += 1
+        print(game_message)
+        print("You have won {!s} games, lost {!s} games and drawed {!s} \
+games!\n\n\n".format(*tally.values()))
 
-        player_choice = choice_assigner(int(player_choice))
-        
-        sleep(1)
-        print(
-        "\nYou chose {} and the computer chose {}.".format(player_choice.lower(), computer_choice.lower()))
-        sleep(0.25)
-        if win_decider(player_choice, computer_choice)[-2] == "n":
-            tally[0] += 1
-            # Win
-        elif win_decider(player_choice, computer_choice)[-2] == "w":
-            tally[1] += 1
-            # Draw
-        else:
-            tally[2] += 1
-            # Loss
-        print(win_decider(player_choice, computer_choice))
-        sleep(0.75)
-        print(
-        "You have won {!s} games, lost {!s} games and drawed {!s} games.\n\n\n".format(tally[0], tally[2], tally[1]))
-        # This is the win counter
-        continue
-
-main()
+if __name__ == "__main__":
+    main()
