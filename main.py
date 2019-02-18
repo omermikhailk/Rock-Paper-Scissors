@@ -1,12 +1,13 @@
-from random import randint
 # To generate the random input for the computer's choice.
-from time import sleep
+from random import randint
 # Allows a natural delay to make the game seem more normal.
+from time import sleep
 
 def choice_logic(num):
     """
-    Based on a numeric value this function will assign it 
-    to either rock, paper or scissors. And return the option.
+    Based on a numeric value this function will assign the value 
+    to an option which will be either rock, paper or scissors. 
+    And then return the option.
     """
     if num == "1":
         return "Paper"
@@ -50,7 +51,8 @@ def win_decider(comp_and_user_choices):
     Based on the result of the user's choice between rock, paper 
     or scissors, the program will determine who will win in what 
     scenario. And it will return the end result as well as a 
-    message based on the result.
+    message based on the result. The returned data type 
+    will be a tuple.
     """
     player = comp_and_user_choices[0]
     computer = comp_and_user_choices[1]
